@@ -28,7 +28,7 @@ dependencies:
   better_player: ^0.0.62
   hexcolor: ^2.0.3
   expansion_card: ^0.1.0
-
+  percent_indicator: ^2.1.7+2
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,6 +50,8 @@ flutter:
   # the material Icons class.
   assets:
     - assets/images/logo.png
+    - assets/images/card1.png
+    - assets/images/icon.png
   uses-material-design: true
 
 

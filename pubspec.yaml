@@ -29,6 +29,7 @@ dependencies:
   hexcolor: ^2.0.3
   expansion_card: ^0.1.0
   percent_indicator: ^2.1.7+2
+  carousel_slider: ^3.0.0
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -52,6 +53,9 @@ flutter:
     - assets/images/logo.png
     - assets/images/card1.png
     - assets/images/icon.png
+    - assets/images/welcome.png
+    - assets/images/img_ads.png
+    - assets/images/ic_rozet.png
   uses-material-design: true
 
 

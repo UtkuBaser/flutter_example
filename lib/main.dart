@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 void main() {
   runApp(MyApp());
-  videoPlayerController.initialize();
 }
 
 final videoPlayerController = VideoPlayerController.network(
@@ -35,7 +35,11 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  int active = 0;
+  bool _extend = false;
+  int selectedMenu = 0;
   int _counter = 0;
   int selectedView = 0;
   int _selectedIndex = 0;
@@ -453,7 +457,7 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding:
                     EdgeInsets.only(top: 10, left: 15, right: 15, bottom: 5),
-                child: new LinearPercentIndicator(
+                child: LinearPercentIndicator(
                   lineHeight: 10.0,
                   percent: card['progress'] / 100,
                   linearStrokeCap: LinearStrokeCap.roundAll,
@@ -501,6 +505,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -517,196 +522,544 @@ class _MyHomePageState extends State<MyHomePage> {
             style: TextStyle(color: Colors.black),
           ),
         ),
-        body: ListView(
+        body: Stack(
           children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Container(
-                  child: Column(
-                children: [
-                  DefaultTabController(
-                      length: 3,
-                      child: Container(
-                        child: TabBar(
-                          onTap: setTabIndex,
-                          labelColor: Colors.black,
-                          indicatorColor: Colors.black,
-                          unselectedLabelColor: Colors.grey,
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          tabs: [
-                            Tab(text: "Eğitimlerim"),
-                            Tab(text: "Önerilenler"),
-                            Tab(text: "Katalog")
-                          ],
-                        ),
-                      )),
-                  if (_selectedIndex == 0)
-                    Container(
-                        child: Padding(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Column(
-                        children: [
-                          Container(
-                              child: Row(
+            Row(
+              children: [
+                NavigationRail(
+                  extended: _extend,
+                  elevation: 5,
+                  selectedIndex: selectedMenu,
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      selectedMenu = index;
+                    });
+                  },
+                  destinations: const <NavigationRailDestination>[
+                    NavigationRailDestination(
+                      icon: Icon(Icons.home_outlined),
+                      selectedIcon: Icon(Icons.home),
+                      label: Text('First'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.wb_incandescent_outlined),
+                      selectedIcon: Icon(Icons.wb_incandescent),
+                      label: Text('Second'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.star_border),
+                      selectedIcon: Icon(Icons.star),
+                      label: Text('Third'),
+                    ),
+                  ],
+                ),
+                if (selectedMenu == 0)
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Row(
                             children: [
-                              ButtonTheme(
-                                height: 40,
-                                child: ElevatedButton(
-                                  style: ButtonStyle(
-                                      backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Colors.white),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  color: Color(0xff7478FB)),
+                              Expanded(
+                                flex: 5,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Color(0xff7276F7),
+                                                  offset: Offset(0.0, 1.0),
+                                                  blurRadius: 10.0,
+                                                ),
+                                              ],
                                               borderRadius:
-                                                  BorderRadius.circular(5)))),
-                                  onPressed: selectType,
-                                  child: Text("Hedef Tarih Yakın",
-                                      style:
-                                          TextStyle(color: Color(0xff7478FB))),
+                                                  BorderRadius.circular(10),
+                                              image: DecorationImage(
+                                                fit: BoxFit.fill,
+                                                image: AssetImage(
+                                                  'images/welcome.png',
+                                                ),
+                                              ),
+                                            ),
+                                            height: 150,
+                                            width: double.infinity,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.all(15),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Hoşgeldin Alev Yıldız",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 30),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 15),
+                                                  child: Text(
+                                                    "Neo Akademi ile kendini geliştirmeye başla.",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 15),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Positioned(
+                                            bottom: 15,
+                                            right: 20,
+                                            child: SizedBox(
+                                              width: 100,
+                                              height: 35,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all<
+                                                          Color>(Colors.white),
+                                                ),
+                                                onPressed: () {
+                                                  print("asd");
+                                                },
+                                                child: Text("BAŞLA",
+                                                    style: TextStyle(
+                                                        color: Colors.black)),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Stack(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey,
+                                                      offset: Offset(0.0, 1.0),
+                                                      blurRadius: 10.0,
+                                                    ),
+                                                  ],
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  color: Colors.white),
+                                              height: 150,
+                                              width: double.infinity,
+                                              child: Expanded(
+                                                flex: 3,
+                                                child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        top: 10, left: 15),
+                                                    child: Row(
+                                                      children: [
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              "Kazanımlarım",
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 17),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 10),
+                                                              child:
+                                                                  Image.asset(
+                                                                "/images/ic_rozet.png",
+                                                                height: 100,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 30,
+                                                                      left: 10),
+                                                              child: Text(
+                                                                "Hoşgeldin Rozeti",
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        16),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: 15,
+                                                                      left: 10),
+                                                              child: Container(
+                                                                width: 400,
+                                                                constraints:
+                                                                    BoxConstraints(
+                                                                        maxWidth:
+                                                                            400),
+                                                                child: Text(
+                                                                  "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          15,
+                                                                      color: Colors
+                                                                          .grey),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              constraints:
+                                                                  BoxConstraints(
+                                                                      maxWidth:
+                                                                          390),
+                                                              child: Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        top: 5),
+                                                                child:
+                                                                    LinearPercentIndicator(
+                                                                  trailing: Text(
+                                                                      "1/10",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.grey)),
+                                                                  lineHeight:
+                                                                      6.0,
+                                                                  percent: 0.2,
+                                                                  linearStrokeCap:
+                                                                      LinearStrokeCap
+                                                                          .roundAll,
+                                                                  backgroundColor:
+                                                                      Color(
+                                                                          0xffE8E8E8),
+                                                                  progressColor:
+                                                                      Colors
+                                                                          .blue,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    )),
+                                              ),
+                                            ),
+                                            Positioned(
+                                              bottom: 15,
+                                              right: 20,
+                                              child: SizedBox(
+                                                width: 100,
+                                                height: 35,
+                                                child: ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(Color(
+                                                                0xff21C8D9)),
+                                                  ),
+                                                  onPressed: () {
+                                                    print("asd");
+                                                  },
+                                                  child: Text("GÖZAT",
+                                                      style: TextStyle(
+                                                          color: Colors.white)),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                                  ],
                                 ),
                               ),
-                              Padding(
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: ButtonTheme(
-                                    height: 40,
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.white),
-                                          shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      color: Color(0xff7478FB)),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          5)))),
-                                      onPressed: selectType,
-                                      child: Text("Kendi Seçtiklerim",
-                                          style: TextStyle(
-                                              color: Color(0xff7478FB))),
-                                    ),
-                                  )),
-                              Spacer(),
-                              Padding(
-                                  padding: EdgeInsets.only(right: 10),
-                                  child: ButtonTheme(
-                                    height: 40,
-                                    child: ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<Color>(
-                                                    selectedView == 0
-                                                        ? Color(0xff7478FB)
-                                                        : Colors.transparent),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color:
-                                                            Color(0xff7478FB)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(5)))),
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedView = 0;
-                                          });
-                                        },
-                                        child: Icon(Icons.apps)),
-                                  )),
-                              Padding(
-                                  padding: EdgeInsets.only(right: 10),
-                                  child: ButtonTheme(
-                                    height: 40,
-                                    child: ElevatedButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                MaterialStateProperty.all<Color>(
-                                                    selectedView == 1
-                                                        ? Color(0xff7478FB)
-                                                        : Colors.transparent),
-                                            shape: MaterialStateProperty.all<
-                                                    RoundedRectangleBorder>(
-                                                RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color:
-                                                            Color(0xff7478FB)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(5)))),
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedView = 1;
-                                          });
-                                        },
-                                        child: Icon(Icons.list)),
+                              Expanded(
+                                  flex: 5,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                              fit: BoxFit.fill,
+                                              image: AssetImage(
+                                                'images/img_ads.png',
+                                              ),
+                                            ),
+                                          ),
+                                          height: 320,
+                                          width: double.infinity,
+                                        ),
+                                      ),
+                                    ],
                                   )),
                             ],
-                          )),
-                          Container(
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.4,
-                                  child: Container(
-                                      padding: EdgeInsets.only(top: 10),
-                                      child: TextField(
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                        decoration: InputDecoration(
-                                            enabledBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5.0)),
-                                                borderSide: BorderSide(
-                                                    color: Colors.white)),
-                                            border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5.0)),
-                                                borderSide: BorderSide(
-                                                    color: Colors.white)),
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5.0)),
-                                                borderSide: BorderSide(
-                                                    color: Colors.white)),
-                                            filled: true,
-                                            prefixIcon: Icon(
-                                              Icons.search,
-                                              color: Colors.grey,
-                                            ),
-                                            fillColor: Colors.white,
-                                            hintText: "Eğitimlerim için ara.."),
-                                      )),
-                                ),
-                              ],
-                            ),
                           ),
-                          Padding(
-                              padding: EdgeInsets.only(top: 20),
-                              child: getSelectedView()),
-                        ],
-                      ),
-                    )),
-                  if (_selectedIndex == 1)
-                    Container(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 20),
-                            child: Text("Önerilenler"),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                ],
-              )),
-            )
+                  ),
+                if (selectedMenu == 1)
+                  Expanded(
+                      child: ListView(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Container(
+                            child: Column(
+                          children: [
+                            DefaultTabController(
+                                length: 3,
+                                child: Container(
+                                  child: TabBar(
+                                    onTap: setTabIndex,
+                                    labelColor: Colors.black,
+                                    indicatorColor: Colors.black,
+                                    unselectedLabelColor: Colors.grey,
+                                    indicatorSize: TabBarIndicatorSize.tab,
+                                    tabs: [
+                                      Tab(text: "Eğitimlerim"),
+                                      Tab(text: "Önerilenler"),
+                                      Tab(text: "Katalog")
+                                    ],
+                                  ),
+                                )),
+                            if (_selectedIndex == 0)
+                              Container(
+                                  child: Padding(
+                                padding: EdgeInsets.only(top: 20),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        child: Row(
+                                      children: [
+                                        ButtonTheme(
+                                          height: 40,
+                                          child: ElevatedButton(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                    MaterialStateProperty.all<
+                                                        Color>(Colors.white),
+                                                shape: MaterialStateProperty.all<
+                                                        RoundedRectangleBorder>(
+                                                    RoundedRectangleBorder(
+                                                        side: BorderSide(
+                                                            color: Color(
+                                                                0xff7478FB)),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(5)))),
+                                            onPressed: selectType,
+                                            child: Text("Hedef Tarih Yakın",
+                                                style: TextStyle(
+                                                    color: Color(0xff7478FB))),
+                                          ),
+                                        ),
+                                        Padding(
+                                            padding: EdgeInsets.only(left: 10),
+                                            child: ButtonTheme(
+                                              height: 40,
+                                              child: ElevatedButton(
+                                                style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                                Colors.white),
+                                                    shape: MaterialStateProperty.all<
+                                                            RoundedRectangleBorder>(
+                                                        RoundedRectangleBorder(
+                                                            side: BorderSide(
+                                                                color: Color(
+                                                                    0xff7478FB)),
+                                                            borderRadius:
+                                                                BorderRadius.circular(5)))),
+                                                onPressed: selectType,
+                                                child: Text("Kendi Seçtiklerim",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xff7478FB))),
+                                              ),
+                                            )),
+                                        Spacer(),
+                                        Padding(
+                                            padding: EdgeInsets.only(right: 10),
+                                            child: ButtonTheme(
+                                              height: 40,
+                                              child: ElevatedButton(
+                                                  style: ButtonStyle(
+                                                      backgroundColor: MaterialStateProperty.all<
+                                                          Color>(selectedView ==
+                                                              0
+                                                          ? Color(0xff7478FB)
+                                                          : Colors.transparent),
+                                                      shape: MaterialStateProperty.all<
+                                                              RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                              side: BorderSide(
+                                                                  color: Color(
+                                                                      0xff7478FB)),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(5)))),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      selectedView = 0;
+                                                    });
+                                                  },
+                                                  child: Icon(Icons.apps)),
+                                            )),
+                                        Padding(
+                                            padding: EdgeInsets.only(right: 10),
+                                            child: ButtonTheme(
+                                              height: 40,
+                                              child: ElevatedButton(
+                                                  style: ButtonStyle(
+                                                      backgroundColor: MaterialStateProperty.all<
+                                                          Color>(selectedView ==
+                                                              1
+                                                          ? Color(0xff7478FB)
+                                                          : Colors.transparent),
+                                                      shape: MaterialStateProperty.all<
+                                                              RoundedRectangleBorder>(
+                                                          RoundedRectangleBorder(
+                                                              side: BorderSide(
+                                                                  color: Color(
+                                                                      0xff7478FB)),
+                                                              borderRadius:
+                                                                  BorderRadius.circular(5)))),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      selectedView = 1;
+                                                    });
+                                                  },
+                                                  child: Icon(Icons.list)),
+                                            )),
+                                      ],
+                                    )),
+                                    Container(
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            child: Container(
+                                                padding:
+                                                    EdgeInsets.only(top: 10),
+                                                child: TextField(
+                                                  style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                  decoration: InputDecoration(
+                                                      enabledBorder: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      5.0)),
+                                                          borderSide: BorderSide(
+                                                              color: Colors
+                                                                  .white)),
+                                                      border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      5.0)),
+                                                          borderSide: BorderSide(
+                                                              color: Colors
+                                                                  .white)),
+                                                      focusedBorder: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(Radius.circular(5.0)),
+                                                          borderSide: BorderSide(color: Colors.white)),
+                                                      filled: true,
+                                                      prefixIcon: Icon(
+                                                        Icons.search,
+                                                        color: Colors.grey,
+                                                      ),
+                                                      fillColor: Colors.white,
+                                                      hintText: "Eğitimlerim için ara.."),
+                                                )),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.only(top: 20),
+                                        child: getSelectedView()),
+                                  ],
+                                ),
+                              )),
+                            if (_selectedIndex == 1)
+                              Container(
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 20),
+                                      child: Text("Önerilenler"),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        )),
+                      )
+                    ],
+                  )),
+              ],
+            ),
+            Positioned(
+              top: 15,
+              left: (_extend == false ? 72 : 257),
+              child: ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _extend = _extend != true;
+                  });
+                },
+                style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all<Size>(Size(5, 15)),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10))))),
+                child: Icon(
+                  Icons.arrow_forward_ios_outlined,
+                  color: Colors.grey,
+                ),
+              ),
+            ),
           ],
         ));
   }
